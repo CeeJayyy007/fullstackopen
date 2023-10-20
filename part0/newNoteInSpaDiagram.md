@@ -12,6 +12,6 @@ sequenceDiagram
 
     server-->>browser: HTTP status code 201 created
     server-->>browser: [{ "content": "New spa note", "date": "2023-1-1" }, ... ]
-    Note over rowser: This time, the server does not ask for a redirect <br/>and does not send any further HTTP requests
+    Note over browser: This time, the server does not ask for a redirect <br/>and does not send any further HTTP requests
     deactivate server
 ```
