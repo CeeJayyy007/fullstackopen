@@ -1,4 +1,4 @@
-# Fullstackopen
+# Fullstackopen Exercises
 Fullstack open lessons and exercises
 
 ## Introduction
@@ -9,4 +9,4 @@ Cheers!
 
 ## Exercise Update
 
-### Exercises 0.4 to 0.6 in progress
+- [Part 0 exercises complete](./README.md)
