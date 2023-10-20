@@ -32,7 +32,6 @@ sequenceDiagram
     
     Note right of browser: Submitting a form: The browser sends the user input "sequence diagram updated" in the notes field to the server at the click of the Save button
 
-
     server-->>browser: HTTP status code 302
     Note right of browser: This is a URL redirect that asks the browser to do a new HTTP GET request to notes endpoint
     deactivate server
