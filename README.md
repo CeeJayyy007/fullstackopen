@@ -9,4 +9,4 @@ Cheers!
 
 ## Exercise Update
 
-- [Part 0 exercises complete](./README.md)
+- [Part 0 exercises complete](./part0/)
