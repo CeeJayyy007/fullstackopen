@@ -26,4 +26,13 @@ sequenceDiagram
     deactivate server
 
     Note right of browser: The browser executes the callback function that renders the notes
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/notes 
+    
+    Note right of browser: The user enters "sequence diagram updated" in the notes field and clicks the Save button
+
+    activate server
+    server-->>browser: [{ "content": "sequence diagram updated", "date": "2023-10-20" }, ... ]
+    deactivate server
+    Note right of browser: The browser executes the callback function that renders the updated notes list
 ```
