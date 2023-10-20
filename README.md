@@ -7,7 +7,6 @@ Thank you for taking the time to review my submissions and for all you do to imp
 
 Cheers!
 
-
 ## Exercise Update
 
 ### Exercises 0.4 to 0.6 in progress
