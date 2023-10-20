@@ -6,3 +6,8 @@ Hi, my name is James, and you are welcome to my repository detailing my exercise
 Thank you for taking the time to review my submissions and for all you do to impact knowledge in the world!
 
 Cheers!
+
+
+## Exercise Update
+
+### Exercises 0.4 to 0.6 in progress
