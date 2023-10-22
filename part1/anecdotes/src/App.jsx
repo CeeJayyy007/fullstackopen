@@ -4,7 +4,7 @@ const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 );
 
-const Display = ({ text, anecdotes, vote, anecdotesIndex }) => {
+const Anecdotes = ({ text, anecdotes, vote, anecdotesIndex }) => {
   return (
     <div>
       <h1>{text}</h1>
@@ -51,7 +51,7 @@ const App = () => {
 
   return (
     <div>
-      <Display
+      <Anecdotes
         text="Anecdote of the day"
         anecdotes={anecdotes}
         vote={vote}
@@ -59,7 +59,7 @@ const App = () => {
       />
       <Button text="Vote" handleClick={handleVote} />
       <Button text="Next Anectode" handleClick={handleNext} />
-      <Display
+      <Anecdotes
         text="Anecdote with most votes"
         anecdotes={anecdotes}
         vote={vote}
