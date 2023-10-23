@@ -8,6 +8,7 @@ const PhoneRecord = ({ person }) => {
 };
 
 const Persons = ({ persons, newFilter }) => {
+  //retrieve filtered records into an array
   const filteredPhonebook = persons.filter((person) =>
     person.name.toLowerCase().includes(newFilter)
   );

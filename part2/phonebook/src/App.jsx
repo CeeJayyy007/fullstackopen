@@ -31,6 +31,7 @@ const App = () => {
         person.number === personObject.number
     );
 
+    //check if the person already exists
     personAlreadyExists
       ? alert(
           `${personAlreadyExists.name} is already added to phonebook with number ${personAlreadyExists.number}`
