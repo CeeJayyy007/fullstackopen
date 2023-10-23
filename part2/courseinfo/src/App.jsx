@@ -19,7 +19,7 @@ const Content = ({ course }) => {
 const Total = ({ course }) => {
   return (
     <h3>
-      total of{" "}
+      Total of{" "}
       {course.parts[0].exercises +
         course.parts[1].exercises +
         course.parts[2].exercises +
