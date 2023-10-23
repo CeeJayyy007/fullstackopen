@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Record = ({ name }) => <div>{name}</div>;
+const PhoneRecord = ({ name }) => <div>{name}</div>;
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -13,11 +13,18 @@ const App = () => {
       id: persons.length + 1,
     };
 
-    setPersons(persons.concat(personObject));
+    const personAlreadyExists = persons.find(
+      (person) => person.name === personObject.name
+    );
+
+    personAlreadyExists
+      ? alert(`${newName} is already added to phonebook`)
+      : setPersons(persons.concat(personObject));
+
     setNewName("");
   };
 
-  const handlePhoneBookChange = (event) => {
+  const handlePhonebookChange = (event) => {
     setNewName(event.target.value);
   };
 
@@ -27,7 +34,7 @@ const App = () => {
       <form onSubmit={addPerson}>
         <div>
           Name:{" "}
-          <input value={newName} onChange={handlePhoneBookChange} required />
+          <input value={newName} onChange={handlePhonebookChange} required />
         </div>
         <div>
           <button type="submit">Add</button>
@@ -36,7 +43,7 @@ const App = () => {
 
       <h2>Numbers</h2>
       {persons.map((person) => (
-        <Record key={person.id} name={person.name} />
+        <PhoneRecord key={person.id} name={person.name} />
       ))}
     </div>
   );
