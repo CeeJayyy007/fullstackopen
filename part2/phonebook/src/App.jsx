@@ -35,10 +35,12 @@ const App = () => {
       ? alert(
           `${personAlreadyExists.name} is already added to phonebook with number ${personAlreadyExists.number}`
         )
-      : setPersons(persons.concat(personObject));
-
-    setNewName("");
-    setNewNumber("");
+      : axios
+          .post("http://localhost:3001/persons", personObject)
+          .then((response) => {
+            setPersons(persons.concat(response.data));
+            setNewNumber("");
+          });
   };
 
   const handleNameChange = (event) => {
