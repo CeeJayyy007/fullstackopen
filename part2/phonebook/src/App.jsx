@@ -3,12 +3,15 @@ import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import Filter from "./components/Filter";
 import phonebookService from "./services/phonebook";
+import Notification from "./components/Notification";
+import "./index.css";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     phonebookService.getAll().then((initialData) => {
@@ -54,6 +57,10 @@ const App = () => {
                 person.id !== returnedData.id ? person : returnedData
               )
             );
+            setMessage(`Updated ${returnedData.name}'s number`);
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
             setNewName("");
             setNewNumber("");
           });
@@ -80,6 +87,10 @@ const App = () => {
       : // create new record if new record does not exist
         phonebookService.create(personObject).then((returnedData) => {
           setPersons(persons.concat(returnedData));
+          setMessage(`Added ${returnedData.name}`);
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
           setNewName("");
           setNewNumber("");
         });
@@ -109,6 +120,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {message ? <Notification message={message} /> : ""}
       <Filter handleFilterChange={handleFilterChange} newFilter={newFilter} />
       <h3>Add a new record</h3>
       <PersonForm
