@@ -23,18 +23,62 @@ const App = () => {
       number: newNumber,
     };
 
-    const personAlreadyExists = persons.find(
+    //validate that the person's name and number exists
+    const nameAndNumberExists = persons.find(
       (person) =>
-        person.name === personObject.name ||
+        person.name === personObject.name &&
         person.number === personObject.number
     );
 
-    //check if the person already exists
-    personAlreadyExists
-      ? alert(
-          `${personAlreadyExists.name} is already added to phonebook with number ${personAlreadyExists.number}`
+    //validate that the person's name exists
+    const personNameExists = persons.find(
+      (person) => person.name === personObject.name
+    );
+
+    //validate that the person's number exists
+    const personNumberExists = persons.find(
+      (person) => person.number === personObject.number
+    );
+
+    const confirmUpdate = () => {
+      if (
+        window.confirm(
+          `${personNameExists.name} is already added to phonebook, do you want to replace the old number ${personNameExists.number} with this new one?`
         )
-      : phonebookService.create(personObject).then((returnedData) => {
+      ) {
+        phonebookService
+          .update(personNameExists.id, personObject)
+          .then((returnedData) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== returnedData.id ? person : returnedData
+              )
+            );
+            setNewName("");
+            setNewNumber("");
+          });
+      }
+    };
+
+    // check if name and number exists and show alert
+    nameAndNumberExists
+      ? alert(
+          `${nameAndNumberExists.name} is already added to phonebook with number ${nameAndNumberExists.number}`
+        )
+      : personNumberExists && personNameExists
+      ? alert(
+          `${personNumberExists.name} is already added to phonebook with number ${personNumberExists.number}`
+        )
+      : // check if only the number already exists and show alert
+      !personNameExists && personNumberExists
+      ? alert(
+          `${personNumberExists.name} is already added to phonebook with number ${personNumberExists.number}`
+        )
+      : // update existing record if only the name exists
+      personNameExists && !personNumberExists
+      ? confirmUpdate()
+      : // create new record if new record does not exist
+        phonebookService.create(personObject).then((returnedData) => {
           setPersons(persons.concat(returnedData));
           setNewName("");
           setNewNumber("");
