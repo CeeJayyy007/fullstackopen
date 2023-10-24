@@ -21,7 +21,6 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
     };
 
     const personAlreadyExists = persons.find(
@@ -40,6 +39,15 @@ const App = () => {
           setNewName("");
           setNewNumber("");
         });
+  };
+
+  const handleDeleteOf = (id, name) => {
+    if (window.confirm(`Do you really want to delete ${name}?`)) {
+      phonebookService.deletePerson(id).then((returnedData) => {
+        console.log(returnedData);
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
   };
 
   const handleNameChange = (event) => {
@@ -67,7 +75,11 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={persons} newFilter={newFilter} />
+      <Persons
+        persons={persons}
+        newFilter={newFilter}
+        handleDelete={handleDeleteOf}
+      />
     </div>
   );
 };
