@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import Filter from "./components/Filter";
+import Title from "./components/Title";
 import phonebookService from "./services/phonebook";
 import Notification from "./components/Notification";
 import "./index.css";
@@ -106,6 +107,7 @@ const App = () => {
         });
   };
 
+  // delete phonebook record
   const handleDeleteOf = (id, name) => {
     if (window.confirm(`Do you really want to delete ${name}?`)) {
       phonebookService
@@ -130,37 +132,28 @@ const App = () => {
     }
   };
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value);
-  };
-
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value);
-  };
-
-  const handleFilterChange = (event) => {
-    setNewFilter(event.target.value);
+  const handleChange = (func) => (event) => {
+    func(event.target.value);
   };
 
   return (
     <div>
-      <h2>Phonebook</h2>
-      {message ? <Notification message={message} status="success" /> : ""}
-      {errorMessage ? (
-        <Notification message={errorMessage} status="error" />
-      ) : (
-        ""
-      )}
-      <Filter handleFilterChange={handleFilterChange} newFilter={newFilter} />
-      <h3>Add a new record</h3>
+      <Title name="Phonebook" />
+      {message && <Notification message={message} />}
+      {errorMessage && <Notification message={errorMessage} error={true} />}
+      <Filter
+        handleFilterChange={handleChange(setNewFilter)}
+        newFilter={newFilter}
+      />
+      <Title name="Add a new record" />
       <PersonForm
         addPerson={addPerson}
         newName={newName}
         newNumber={newNumber}
-        handleNameChange={handleNameChange}
-        handleNumberChange={handleNumberChange}
+        handleNameChange={handleChange(setNewName)}
+        handleNumberChange={handleChange(setNewNumber)}
       />
-      <h3>Numbers</h3>
+      <Title name="Numbers" />
       <Persons
         persons={persons}
         newFilter={newFilter}
