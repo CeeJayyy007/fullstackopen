@@ -1,6 +1,4 @@
-const CountryCard = ({ filteredCountry }) => {
-  const country = filteredCountry[0];
-
+const CountryCard = ({ country }) => {
   const name = country.name.common;
   const capital = country.capital;
   const area = country.area;

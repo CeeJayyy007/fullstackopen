@@ -6,6 +6,7 @@ import Display from "./components/Display";
 const App = () => {
   const [countries, setCountries] = useState(null);
   const [filteredCountries, setFilteredCountries] = useState([]);
+  const [countrySelector, setCountrySelector] = useState("");
 
   useEffect(() => {
     countriesService.getAll().then((initialCountries) => {
@@ -29,10 +30,18 @@ const App = () => {
     setFilteredCountries(filterResult);
   };
 
+  const handleShow = (name) => {
+    setCountrySelector(name);
+  };
+
   return (
     <>
       <Search text="Find Countries" handleChange={handleChange} />
-      <Display filteredCountries={filteredCountries} />
+      <Display
+        filteredCountries={filteredCountries}
+        handleShow={handleShow}
+        countrySelector={countrySelector}
+      />
     </>
   );
 };

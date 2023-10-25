@@ -1,7 +1,8 @@
 import CountryCard from "./CountryCard";
+import CountryList from "./CountryList";
 import Text from "./Text";
 
-const Display = ({ filteredCountries }) => {
+const Display = ({ filteredCountries, handleShow, countrySelector }) => {
   return (
     <>
       {filteredCountries.length > 10 ? (
@@ -9,12 +10,20 @@ const Display = ({ filteredCountries }) => {
       ) : filteredCountries.length === 0 ? (
         <Text text="No query provided or query does not match any countries" />
       ) : filteredCountries.length === 1 ? (
-        <CountryCard filteredCountry={filteredCountries} />
+        <CountryCard country={filteredCountries[0]} />
       ) : (
         <ul>
-          {filteredCountries.map((country) => (
-            <li key={country.name.common}>{country.name.common}</li>
-          ))}
+          {filteredCountries.map((country) => {
+            const name = country.name.common;
+            return (
+              <CountryList
+                key={name}
+                country={country}
+                handleShow={() => handleShow(name)}
+                countrySelector={countrySelector}
+              />
+            );
+          })}
         </ul>
       )}
     </>
