@@ -30,16 +30,12 @@ const App = () => {
     setFilteredCountries(filterResult);
   };
 
-  const handleShow = (name) => {
-    setCountrySelector(name);
-  };
-
   return (
     <>
       <Search text="Find Countries" handleChange={handleChange} />
       <Display
         filteredCountries={filteredCountries}
-        handleShow={handleShow}
+        handleShow={(name) => setCountrySelector(name)}
         countrySelector={countrySelector}
       />
     </>
