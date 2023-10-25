@@ -13,3 +13,4 @@ Cheers!
 
 - [Part 0 exercises complete](./part0/)
 - [Part 1 exercises complete](./part1/)
+- [Part 2 exercises complete](./part2/)
