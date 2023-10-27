@@ -21,6 +21,7 @@ const App = () => {
     });
   }, []);
 
+  // add person to phonebook
   const addPerson = (event) => {
     event.preventDefault();
     const personObject = {
