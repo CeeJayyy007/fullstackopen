@@ -6,5 +6,5 @@
 
 - [3.1 - 3.22 : Phonebook backend](https://github.com/CeeJayyy007/fullstackopen-part3-backend)
 - [3.9 - 3.11: Phonebook deployed to Render](https://phonebook-app-tq19.onrender.com/)
-- [3.12 - 3.21: Phonebook database](https://github.com/CeeJayyy007/fullstackopen-part3-backend/models/phonebook.js)
-- [3.22 Lint configuration](https://github.com/CeeJayyy007/fullstackopen-part3-backend/eslint.js)
+- [3.12 - 3.21: Phonebook database](https://github.com/CeeJayyy007/fullstackopen-part3-backend/blob/main/models/phonebook.js)
+- [3.22 Lint configuration](https://github.com/CeeJayyy007/fullstackopen-part3-backend/blob/main/.eslintrc.js)
