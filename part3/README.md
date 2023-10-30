@@ -4,6 +4,7 @@
 
 ## Table of Content
 
+- [Phonebook frontend](../part2/phonebook/)
 - [3.1 - 3.22 : Phonebook backend](https://github.com/CeeJayyy007/fullstackopen-part3-backend)
 - [3.9 - 3.11: Phonebook deployed to Render](https://phonebook-app-tq19.onrender.com/)
 - [3.12 - 3.21: Phonebook database](https://github.com/CeeJayyy007/fullstackopen-part3-backend/blob/main/models/phonebook.js)
