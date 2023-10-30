@@ -97,15 +97,24 @@ const App = () => {
       personNameExists && !personNumberExists
       ? confirmUpdate(personNameExists)
       : // create new record if new record does not exist
-        phonebookService.create(personObject).then((returnedData) => {
-          setPersons(persons.concat(returnedData));
-          setMessage(`Added ${returnedData.name}`);
-          setTimeout(() => {
-            setMessage(null);
-          }, 5000);
-          setNewName("");
-          setNewNumber("");
-        });
+        phonebookService
+          .create(personObject)
+          .then((returnedData) => {
+            setPersons(persons.concat(returnedData));
+            setMessage(`Added ${returnedData.name}`);
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
+            setNewName("");
+            setNewNumber("");
+          })
+          .catch((error) => {
+            console.log(error.response.data.error);
+            setErrorMessage(`${error.response.data.error}`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          });
   };
 
   // delete phonebook record
