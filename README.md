@@ -17,3 +17,4 @@ Cheers!
 - [Part 3 exercises complete](./part3/)
 - [Part 4 exercises complete](./part4/)
 - [Part 5 exercises complete](./part5/)
+- [Part 6 exercises complete](./part6/)
