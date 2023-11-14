@@ -1,6 +1,7 @@
 import deepFreeze from "deep-freeze";
 import counterReducer from "./reducers/reducer";
 
+// testing the unicafe reducer
 describe("unicafe reducer", () => {
   const initialState = {
     good: 0,
