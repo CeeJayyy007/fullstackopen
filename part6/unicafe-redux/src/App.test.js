@@ -1,81 +1,82 @@
-import deepFreeze from "deep-freeze";
-import counterReducer from "./reducers/reducer";
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import "@testing-library/jest-dom";
+import { Provider } from "react-redux";
+import App, { Button, Display, StatisticLine, Statistics } from "./App";
+import store from "./store/store";
 
-// testing the unicafe reducer
-describe("unicafe reducer", () => {
-  const initialState = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+describe("Button", () => {
+  let user;
+  let handleClick;
 
-  test("should return a proper initial state when called with undefined state", () => {
-    const state = {};
-    const action = {
-      type: "DO_NOTHING",
-    };
-
-    const newState = counterReducer(undefined, action);
-    expect(newState).toEqual(initialState);
+  beforeEach(() => {
+    user = userEvent.setup();
+    handleClick = jest.fn();
   });
 
-  test("good is incremented", () => {
-    const action = {
-      type: "GOOD",
-    };
-    const state = initialState;
-
-    deepFreeze(state);
-    const newState = counterReducer(state, action);
-    expect(newState).toEqual({
-      good: 1,
-      neutral: 0,
-      bad: 0,
-    });
+  test("renders with correct text", () => {
+    render(<Button text="Test Button" />);
+    const button = screen.getByText("Test Button");
+    expect(button.textContent).toBe("Test Button");
   });
 
-  test("bad is incremented", () => {
-    const action = {
-      type: "BAD",
-    };
-    const state = initialState;
+  test("handles click", async () => {
+    render(<Button handleClick={handleClick} text="Test Button" />);
+    const button = screen.getByText("Test Button");
+    await user.click(button);
 
-    deepFreeze(state);
-    const newState = counterReducer(state, action);
-    expect(newState).toEqual({
-      good: 0,
-      neutral: 0,
-      bad: 1,
-    });
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("Display", () => {
+  test("renders with correct value", () => {
+    render(<Display value="Test Value" />);
+    const display = screen.getByText("Test Value");
+
+    expect(display.textContent).toBe("Test Value");
+  });
+});
+
+describe("StatisticLine", () => {
+  test("renders with correct text and value", () => {
+    render(<StatisticLine text="Test Text" value="Test Value" />);
+
+    const text = screen.getByText("Test Text");
+    const value = screen.getByText("Test Value");
+    expect(text.textContent).toBe("Test Text");
+    expect(value.textContent).toBe("Test Value");
+  });
+});
+
+describe("Statistics", () => {
+  test("renders with correct values", () => {
+    const { getByText } = render(<Statistics good={5} neutral={3} bad={2} />);
+
+    expect(getByText("Good")).toBeInTheDocument();
+    expect(getByText("5")).toBeInTheDocument();
+    expect(getByText("Neutral")).toBeInTheDocument();
+    expect(getByText("3")).toBeInTheDocument();
+    expect(getByText("Bad")).toBeInTheDocument();
+    expect(getByText("2")).toBeInTheDocument();
   });
 
-  test("neutral is incremented", () => {
-    const action = {
-      type: "NEUTRAL",
-    };
-    const state = initialState;
-
-    deepFreeze(state);
-    const newState = counterReducer(state, action);
-    expect(newState).toEqual({
-      good: 0,
-      neutral: 1,
-      bad: 0,
-    });
+  test('renders "No feedback given" when all values are 0', () => {
+    const { getByText } = render(<Statistics good={0} neutral={0} bad={0} />);
+    expect(getByText("No feedback given")).toBeInTheDocument();
   });
+});
 
-  test("zero resets the state to initial state", () => {
-    const action = {
-      type: "ZERO",
-    };
-    const state = initialState;
-
-    deepFreeze(state);
-    const newState = counterReducer(state, action);
-    expect(newState).toEqual({
-      good: 0,
-      neutral: 0,
-      bad: 0,
-    });
+describe("App", () => {
+  test("renders with initial state", () => {
+    const { getByText } = render(
+      <Provider store={store}>
+        <App />
+      </Provider>
+    );
+    expect(getByText("Give Feedback")).toBeInTheDocument();
+    expect(getByText("Statistics")).toBeInTheDocument();
+    expect(getByText("No feedback given")).toBeInTheDocument();
   });
 });
