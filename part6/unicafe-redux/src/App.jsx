@@ -1,8 +1,8 @@
 import store from "./store/store";
 
-const Display = ({ value }) => <h1>{value}</h1>;
+export const Display = ({ value }) => <h1>{value}</h1>;
 
-const StatisticLine = ({ text, value }) => {
+export const StatisticLine = ({ text, value }) => {
   return (
     <tr>
       <td>{text}</td>
@@ -11,11 +11,11 @@ const StatisticLine = ({ text, value }) => {
   );
 };
 
-const Button = ({ handleClick, text }) => (
+export const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 );
 
-const Statistics = ({ good, neutral, bad }) => {
+export const Statistics = ({ good, neutral, bad }) => {
   const all = good + neutral + bad;
 
   const average = (good - bad) / all;
