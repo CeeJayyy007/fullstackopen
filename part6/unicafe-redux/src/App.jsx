@@ -1,4 +1,4 @@
-import { useState } from "react";
+import store from "./store/store";
 
 const Display = ({ value }) => <h1>{value}</h1>;
 
@@ -29,9 +29,12 @@ const Statistics = ({ good, neutral, bad }) => {
           <StatisticLine text="Good" value={good} />
           <StatisticLine text="Neutral" value={neutral} />
           <StatisticLine text="Bad" value={bad} />
-          <StatisticLine text="All" value={all} />
-          <StatisticLine text="Average" value={average} />
-          <StatisticLine text="Positive" value={`${positive} %`} />
+          <StatisticLine text="All" value={all ? all : 0} />
+          <StatisticLine text="Average" value={average ? average : 0} />
+          <StatisticLine
+            text="Positive"
+            value={`${positive ? positive : 0} %`}
+          />
         </tbody>
       </table>
     );
@@ -41,16 +44,18 @@ const Statistics = ({ good, neutral, bad }) => {
 };
 
 const App = () => {
-  // save clicks of each button to its own state
-  const [good, setGood] = useState(0);
-  const [neutral, setNeutral] = useState(0);
-  const [bad, setBad] = useState(0);
+  const handleGood = () => store.dispatch({ type: "GOOD" });
 
-  const handleGood = () => setGood(good + 1);
+  const handleNeutral = () => store.dispatch({ type: "NEUTRAL" });
 
-  const handleNeutral = () => setNeutral(neutral + 1);
+  const handleBad = () => store.dispatch({ type: "BAD" });
 
-  const handleBad = () => setBad(bad + 1);
+  const handleZero = () => store.dispatch({ type: "ZERO" });
+
+  // redux store values
+  const good = store.getState().good;
+  const neutral = store.getState().neutral;
+  const bad = store.getState().bad;
 
   return (
     <div>
@@ -58,8 +63,9 @@ const App = () => {
       <Button handleClick={handleGood} text="Good" />
       <Button handleClick={handleNeutral} text="Neutral" />
       <Button handleClick={handleBad} text="Bad" />
+      <Button handleClick={handleZero} text="Zero" />
       <Display value="Statistics" />
-      <Statistics good={good} neutral={neutral} bad={bad} />
+      <Statistics good={good} bad={bad} neutral={neutral} />
     </div>
   );
 };
