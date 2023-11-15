@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { voteAnecdote } from "../reducers/anecdoteReducer";
+import { notification } from "../reducers/notificationReducer";
 
 const Anecdotelist = () => {
   const dispatch = useDispatch();
@@ -16,8 +17,9 @@ const Anecdotelist = () => {
     .slice()
     .sort((a, b) => b.votes - a.votes);
 
-  const vote = (id) => {
-    dispatch(voteAnecdote(id));
+  const vote = (anecdote) => {
+    dispatch(voteAnecdote(anecdote.id));
+    dispatch(notification(`You voted for '${anecdote.content}'`));
   };
 
   return sortedAnecdotes.map((anecdote) => (
@@ -25,7 +27,7 @@ const Anecdotelist = () => {
       <div>{anecdote.content}</div>
       <div>
         has {anecdote.votes}
-        <button onClick={() => vote(anecdote.id)}>vote</button>
+        <button onClick={() => vote(anecdote)}>vote</button>
       </div>
     </div>
   ));
