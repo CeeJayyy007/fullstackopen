@@ -19,9 +19,10 @@ const Anecdotelist = () => {
     .sort((a, b) => b.votes - a.votes);
 
   const vote = (anecdote) => {
-    dispatch(voteAnecdote(anecdote.id));
-    dispatch(showNotification(`You voted for '${anecdote.content}'`));
+    const id = anecdote.id;
 
+    dispatch(voteAnecdote(id, anecdote));
+    dispatch(showNotification(`You voted for '${anecdote.content}'`));
     removeNotification(dispatch);
   };
 

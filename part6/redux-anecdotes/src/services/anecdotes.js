@@ -15,4 +15,10 @@ const create = async (content) => {
   return response.data;
 };
 
-export default { getAll, create };
+const update = async (id, content) => {
+  const response = await axios.put(`${baseUrl}/${id}`, content);
+
+  return response.data;
+};
+
+export default { getAll, create, update };
