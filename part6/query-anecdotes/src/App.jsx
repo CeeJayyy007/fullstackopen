@@ -7,17 +7,33 @@ import {
   updateAnecdote,
 } from "./services/requests";
 import AnecdoteList from "./components/AnecdotesList";
+import { useNotificationDispatch } from "./context/NotificationContext";
 
 const App = () => {
   const queryClient = useQueryClient();
+  const dispatch = useNotificationDispatch();
+
+  const hideNotification = () => {
+    setInterval(() => {
+      dispatch({ type: "HIDE" });
+    }, 5000);
+  };
 
   const newAnecdoteMutation = useMutation({
     mutationFn: createAnecdote,
 
     onSuccess: (newAnecdote) => {
-      console.log("newAnecdote", newAnecdote);
       const anecdotes = queryClient.getQueryData(["anecdotes"]);
       queryClient.setQueryData(["anecdotes"], anecdotes.concat(newAnecdote));
+
+      dispatch({ type: "SHOW", payload: `You created '${content}' anecdote` });
+      hideNotification();
+    },
+
+    onError: (error) => {
+      const errorMessage = error.response.data.error;
+      dispatch({ type: "SHOW", payload: errorMessage });
+      hideNotification();
     },
   });
 
@@ -32,6 +48,12 @@ const App = () => {
           anecdote.id !== updatedAnecdote.id ? anecdote : updatedAnecdote
         )
       );
+
+      dispatch({
+        type: "SHOW",
+        payload: `You voted for '${updatedAnecdote.content}`,
+      });
+      hideNotification();
     },
   });
 
