@@ -1,6 +1,6 @@
-const AnecdoteList = ({ anecdotes }) => {
+const AnecdoteList = ({ anecdotes, updateAnecdoteMutation }) => {
   const handleVote = (anecdote) => {
-    console.log("vote");
+    updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 });
   };
 
   return anecdotes.map((anecdote) => (

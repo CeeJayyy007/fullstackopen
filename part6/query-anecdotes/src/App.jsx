@@ -1,7 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import AnecdoteForm from "./components/AnecdoteForm";
 import Notification from "./components/Notification";
-import { getAnecdotes, createAnecdote } from "./services/requests";
+import {
+  getAnecdotes,
+  createAnecdote,
+  updateAnecdote,
+} from "./services/requests";
 import AnecdoteList from "./components/AnecdotesList";
 
 const App = () => {
@@ -9,9 +13,25 @@ const App = () => {
 
   const newAnecdoteMutation = useMutation({
     mutationFn: createAnecdote,
+
     onSuccess: (newAnecdote) => {
+      console.log("newAnecdote", newAnecdote);
       const anecdotes = queryClient.getQueryData(["anecdotes"]);
       queryClient.setQueryData(["anecdotes"], anecdotes.concat(newAnecdote));
+    },
+  });
+
+  const updateAnecdoteMutation = useMutation({
+    mutationFn: updateAnecdote,
+
+    onSuccess: (updatedAnecdote) => {
+      const anecdotes = queryClient.getQueryData(["anecdotes"]);
+      queryClient.setQueryData(
+        ["anecdotes"],
+        anecdotes.map((anecdote) =>
+          anecdote.id !== updatedAnecdote.id ? anecdote : updatedAnecdote
+        )
+      );
     },
   });
 
@@ -36,7 +56,10 @@ const App = () => {
 
       <Notification />
       <AnecdoteForm newAnecdoteMutation={newAnecdoteMutation} />
-      <AnecdoteList anecdotes={anecdotes} />
+      <AnecdoteList
+        anecdotes={anecdotes}
+        updateAnecdoteMutation={updateAnecdoteMutation}
+      />
     </div>
   );
 };
