@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 
+// menu component
 const Menu = () => {
   const padding = {
     paddingRight: 5,
@@ -20,6 +21,7 @@ const Menu = () => {
   );
 };
 
+// anecdote list component
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
@@ -31,6 +33,7 @@ const AnecdoteList = ({ anecdotes }) => (
   </div>
 );
 
+// about component
 const About = () => (
   <div>
     <h2>About anecdote app</h2>
@@ -53,6 +56,7 @@ const About = () => (
   </div>
 );
 
+// footer component
 const Footer = () => (
   <div>
     Anecdote app for <a href="https://fullstackopen.com/">Full Stack Open</a>.
@@ -64,6 +68,7 @@ const Footer = () => (
   </div>
 );
 
+// create new component
 const CreateNew = (props) => {
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState("");
@@ -113,6 +118,7 @@ const CreateNew = (props) => {
   );
 };
 
+// app component
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
