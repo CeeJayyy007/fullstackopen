@@ -88,20 +88,28 @@ const Footer = () => (
 const CreateNew = (props) => {
   const navigate = useNavigate();
 
+  const { reset: resetInput, ...contentInput } = useField("text");
+  const { reset: resetAuthor, ...authorInput } = useField("text");
+  const { reset: resetInfo, ...infoInput } = useField("text");
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.addNew({
-      content: contentInput.value,
-      author: authorInput.value,
-      info: infoInput.value,
-      votes: 0,
-    });
-    navigate("/");
-  };
+    const clickedButton = e.nativeEvent.submitter;
 
-  const contentInput = useField("text");
-  const authorInput = useField("text");
-  const infoInput = useField("text");
+    if (clickedButton.name === "reset") {
+      resetInput();
+      resetAuthor();
+      resetInfo();
+    } else {
+      props.addNew({
+        content: contentInput.value,
+        author: authorInput.value,
+        info: infoInput.value,
+        votes: 0,
+      });
+      navigate("/");
+    }
+  };
 
   return (
     <div>
@@ -120,6 +128,7 @@ const CreateNew = (props) => {
           <input {...infoInput} />
         </div>
         <button>create</button>
+        <button name="reset">reset</button>
       </form>
     </div>
   );
