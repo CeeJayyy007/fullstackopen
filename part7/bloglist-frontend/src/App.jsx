@@ -101,7 +101,7 @@ const App = () => {
       setBlogs(
         blogs
           .map((blog) => (blog.id === id ? updatedBlog : blog))
-          .sort((a, b) => b.likes - a.likes)
+          .sort((a, b) => b.likes - a.likes),
       );
     } catch (exception) {
       const error = exception.response.data.error;
@@ -116,7 +116,7 @@ const App = () => {
 
     if (
       window.confirm(
-        `Remove blog ${blogToDelete.title} by ${blogToDelete.author}?`
+        `Remove blog ${blogToDelete.title} by ${blogToDelete.author}?`,
       )
     ) {
       try {

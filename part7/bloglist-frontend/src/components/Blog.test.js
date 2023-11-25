@@ -26,7 +26,7 @@ describe("<Blog />", () => {
     mockHandler = jest.fn();
 
     container = render(
-      <Blog blog={blog} updateLikes={mockHandler} />
+      <Blog blog={blog} updateLikes={mockHandler} />,
     ).container;
   });
 
@@ -34,7 +34,7 @@ describe("<Blog />", () => {
     const blogDiv = container.querySelector(".blogDiv");
 
     const element = screen.getByText(
-      "Component testing is done with react-testing-library | Frank Mckinley"
+      "Component testing is done with react-testing-library | Frank Mckinley",
     );
 
     expect(element).toBeDefined();
@@ -46,7 +46,7 @@ describe("<Blog />", () => {
     const blogDetailsDiv = container.querySelector(".blogDetailsDiv");
 
     expect(titleDiv.textContent).toContain(
-      "Component testing is done with react-testing-library"
+      "Component testing is done with react-testing-library",
     );
     expect(titleDiv).not.toHaveStyle("display: none");
     expect(blogDetailsDiv).toHaveStyle("display: none");
