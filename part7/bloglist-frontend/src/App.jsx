@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react"
 import Blog from "./components/Blog"
 import blogService from "./services/blogs.js"
@@ -9,7 +10,8 @@ import Notification from "./components/Notification"
 import "./index.css"
 import Togglable from "./components/Togglable"
 import { useDispatch, useSelector } from "react-redux"
-import { toggleNotification } from "./reducers/notificationReducers"
+import { setNotification } from "./reducers/notificationReducers"
+import { initializeBlogs } from "./reducers/blogsReducers.js"
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -18,11 +20,10 @@ const App = () => {
 
   const dispatch = useDispatch()
   const { message, error } = useSelector((state) => state.notification)
+  const blogsFromStore = useSelector((state) => state.blogs)
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
+    dispatch(initializeBlogs())
   }, [blog])
 
   useEffect(() => {
@@ -43,6 +44,16 @@ const App = () => {
     return null
   }
 
+  // error handler
+  const errorHandler = (message, error) => {
+    if (error.includes("token")) {
+      window.localStorage.removeItem("loggedInUser")
+      setUser(null)
+    }
+
+    dispatch(setNotification(message, true))
+  }
+
   // login handler
   const login = async (credentials) => {
     try {
@@ -53,32 +64,8 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
     } catch (exception) {
-      dispatch(
-        toggleNotification("SHOW", {
-          message: "Wrong username or password",
-          error: true,
-        })
-      )
-      setTimeout(() => {
-        dispatch(toggleNotification("HIDE"))
-      }, 5000)
+      dispatch(setNotification("Wrong username or password", true))
     }
-  }
-
-  const errorHandler = (error, message) => {
-    if (error.includes("token")) {
-      window.localStorage.removeItem("loggedInUser")
-      setUser(null)
-    }
-    dispatch(
-      toggleNotification("SHOW", {
-        message: `${message}: ${error}`,
-        error: true,
-      })
-    )
-    setTimeout(() => {
-      dispatch(toggleNotification("HIDE"))
-    }, 5000)
   }
 
   // create blog handler
@@ -89,17 +76,14 @@ const App = () => {
 
       setBlog(blog)
       dispatch(
-        toggleNotification("SHOW", {
-          message: `a new blog ${blog.title} by ${blog.author} added`,
-          error: false,
-        })
+        setNotification(
+          `a new blog ${blog.title} by ${blog.author} added`,
+          false
+        )
       )
-      setTimeout(() => {
-        dispatch(toggleNotification("HIDE"))
-      }, 5000)
     } catch (exception) {
       const error = exception.response.data.error
-      errorHandler(error, "error creating blog")
+      errorHandler("error creating blog", error)
     }
   }
 
@@ -120,7 +104,7 @@ const App = () => {
       )
     } catch (exception) {
       const error = exception.response.data.error
-      errorHandler(error, "error updating blog")
+      errorHandler("error updating blog", error)
     }
   }
 
@@ -139,7 +123,7 @@ const App = () => {
         setBlogs(blogs.filter((blog) => blog.id !== id))
       } catch (exception) {
         const error = exception.response.data.error
-        errorHandler(error, "error deleting blog")
+        errorHandler("error deleting blog", error)
       }
     }
   }
@@ -178,7 +162,7 @@ const App = () => {
           </>
         )}
         <br />
-        {blogs.map((blog) => (
+        {blogsFromStore.map((blog) => (
           <Blog
             key={blog.id}
             blog={blog}
