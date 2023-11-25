@@ -15,6 +15,7 @@ import {
   initializeBlogs,
   updateLikes,
   deleteBlog,
+  createBlog,
 } from "./reducers/blogsReducers.js"
 
 const App = () => {
@@ -28,7 +29,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs())
-  }, [blog])
+  }, [])
 
   useEffect(() => {
     const loggedInUserJSON = window.localStorage.getItem("loggedInUser")
@@ -62,26 +63,24 @@ const App = () => {
   const login = async (credentials) => {
     try {
       const user = await loginService.login(credentials)
-
       window.localStorage.setItem("loggedInUser", JSON.stringify(user))
-
       blogService.setToken(user.token)
       setUser(user)
     } catch (exception) {
-      dispatch(setNotification("Wrong username or password", true))
+      const error = exception.response.data.error
+      errorHandler("Wrong username or password", error)
     }
   }
 
   // create blog handler
-  const createBlog = async (newBlogObject) => {
+  const createNewBlog = async (newBlogObject) => {
     try {
-      const blog = await blogService.create(newBlogObject)
       blogFormRef.current.toggleVisibility()
 
-      setBlog(blog)
+      await dispatch(createBlog(newBlogObject))
       dispatch(
         setNotification(
-          `a new blog ${blog.title} by ${blog.author} added`,
+          `a new blog ${newBlogObject.title} by ${newBlogObject.author} added`,
           false
         )
       )
@@ -92,29 +91,25 @@ const App = () => {
   }
 
   // update blog handler
-  const updateBlogLikes = async (id) => {
-    const blogToUpdate = blogsFromStore.find((blog) => blog.id === id)
-
+  const updateBlogLikes = async (blogToUpdate) => {
     try {
-      dispatch(updateLikes(blogToUpdate, id))
+      await dispatch(updateLikes(blogToUpdate, blogToUpdate.id))
     } catch (exception) {
       const error = exception.response.data.error
-      errorHandler("error updating blog", error)
+      errorHandler("error updating blog: unauthorized user action", error)
     }
   }
 
   console.log("blogs", blogs)
 
-  const deleteBlogRecord = async (id) => {
-    const blogToDelete = blogsFromStore.find((blog) => blog.id === id)
-
+  const deleteBlogRecord = async (blogToDelete) => {
     if (
       window.confirm(
         `Remove blog ${blogToDelete.title} by ${blogToDelete.author}?`
       )
     ) {
       try {
-        dispatch(deleteBlog(id))
+        await dispatch(deleteBlog(blogToDelete.id))
       } catch (exception) {
         const error = exception.response.data.error
         errorHandler("error deleting blog", error)
@@ -151,7 +146,7 @@ const App = () => {
             </p>
 
             <Togglable buttonLabel="Create new list" ref={blogFormRef}>
-              <CreateBlogForm createBlog={createBlog} />
+              <CreateBlogForm createBlog={createNewBlog} />
             </Togglable>
           </>
         )}
@@ -160,8 +155,8 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            updateLikes={updateBlogLikes}
-            deleteBlog={deleteBlogRecord}
+            updateLikes={() => updateBlogLikes(blog)}
+            deleteBlog={() => deleteBlogRecord(blog)}
             user={user}
           />
         ))}
