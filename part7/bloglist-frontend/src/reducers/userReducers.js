@@ -2,11 +2,7 @@ import loginService from "../services/login"
 import blogService from "../services/blogs"
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialState = {
-  username: "",
-  name: "",
-  token: "",
-}
+const initialState = null
 
 const userSlice = createSlice({
   name: "user",
@@ -15,17 +11,14 @@ const userSlice = createSlice({
     setUser(state, action) {
       return action.payload
     },
-    logout(state, action) {
-      return null
-    },
   },
 })
 
 export const { setUser, logout } = userSlice.actions
 
-export const login = ({ username, password }) => {
+export const loginUser = (credentials) => {
   return async (dispatch) => {
-    const user = await loginService.login({ username, password })
+    const user = await loginService.login(credentials)
     blogService.setToken(user.token)
     window.localStorage.setItem("loggedInUser", JSON.stringify(user))
     dispatch(setUser(user))
@@ -43,7 +36,7 @@ export const setUserFromLocalStorage = (loggedInUserJSON) => {
 export const logoutUser = () => {
   return async (dispatch) => {
     window.localStorage.removeItem("loggedInUser")
-    dispatch(logout())
+    dispatch(setUser(initialState))
   }
 }
 

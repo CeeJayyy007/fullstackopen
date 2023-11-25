@@ -17,15 +17,17 @@ import {
   deleteBlog,
   createBlog,
 } from "./reducers/blogsReducers.js"
+import {
+  loginUser,
+  logoutUser,
+  setUserFromLocalStorage,
+} from "./reducers/userReducers.js"
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [blog, setBlog] = useState(null)
-  const [user, setUser] = useState(null)
-
   const dispatch = useDispatch()
   const { message, error } = useSelector((state) => state.notification)
-  const blogsFromStore = useSelector((state) => state.blogs)
+  const blogs = useSelector((state) => state.blogs)
+  const user = useSelector((state) => state.user)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -35,9 +37,7 @@ const App = () => {
     const loggedInUserJSON = window.localStorage.getItem("loggedInUser")
 
     if (loggedInUserJSON) {
-      const user = JSON.parse(loggedInUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      dispatch(setUserFromLocalStorage(loggedInUserJSON))
     }
   }, [])
 
@@ -52,8 +52,7 @@ const App = () => {
   // error handler
   const errorHandler = (message, error) => {
     if (error.includes("token")) {
-      window.localStorage.removeItem("loggedInUser")
-      setUser(null)
+      dispatch(logoutUser())
     }
 
     dispatch(setNotification(message, true))
@@ -62,10 +61,7 @@ const App = () => {
   // login handler
   const login = async (credentials) => {
     try {
-      const user = await loginService.login(credentials)
-      window.localStorage.setItem("loggedInUser", JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      await dispatch(loginUser(credentials))
     } catch (exception) {
       const error = exception.response.data.error
       errorHandler("Wrong username or password", error)
@@ -118,9 +114,8 @@ const App = () => {
   }
 
   // logout handler
-  const handleLogout = () => {
-    window.localStorage.removeItem("loggedInUser")
-    setUser(null)
+  const handleLogout = async () => {
+    await dispatch(logoutUser())
   }
 
   const loginForm = () => {
@@ -151,7 +146,7 @@ const App = () => {
           </>
         )}
         <br />
-        {blogsFromStore.map((blog) => (
+        {blogs.map((blog) => (
           <Blog
             key={blog.id}
             blog={blog}
