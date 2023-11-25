@@ -11,7 +11,11 @@ import "./index.css"
 import Togglable from "./components/Togglable"
 import { useDispatch, useSelector } from "react-redux"
 import { setNotification } from "./reducers/notificationReducers"
-import { initializeBlogs } from "./reducers/blogsReducers.js"
+import {
+  initializeBlogs,
+  updateLikes,
+  deleteBlog,
+} from "./reducers/blogsReducers.js"
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -88,20 +92,11 @@ const App = () => {
   }
 
   // update blog handler
-  const updateLikes = async (id) => {
-    const blogToUpdate = blogs.find((blog) => blog.id === id)
+  const updateBlogLikes = async (id) => {
+    const blogToUpdate = blogsFromStore.find((blog) => blog.id === id)
 
     try {
-      const updatedBlog = await blogService.update(id, {
-        ...blogToUpdate,
-        likes: blogToUpdate.likes + 1,
-      })
-
-      setBlogs(
-        blogs
-          .map((blog) => (blog.id === id ? updatedBlog : blog))
-          .sort((a, b) => b.likes - a.likes)
-      )
+      dispatch(updateLikes(blogToUpdate, id))
     } catch (exception) {
       const error = exception.response.data.error
       errorHandler("error updating blog", error)
@@ -110,8 +105,8 @@ const App = () => {
 
   console.log("blogs", blogs)
 
-  const deleteBlog = async (id) => {
-    const blogToDelete = blogs.find((blog) => blog.id === id)
+  const deleteBlogRecord = async (id) => {
+    const blogToDelete = blogsFromStore.find((blog) => blog.id === id)
 
     if (
       window.confirm(
@@ -119,8 +114,7 @@ const App = () => {
       )
     ) {
       try {
-        await blogService.remove(id)
-        setBlogs(blogs.filter((blog) => blog.id !== id))
+        dispatch(deleteBlog(id))
       } catch (exception) {
         const error = exception.response.data.error
         errorHandler("error deleting blog", error)
@@ -166,8 +160,8 @@ const App = () => {
           <Blog
             key={blog.id}
             blog={blog}
-            updateLikes={updateLikes}
-            deleteBlog={deleteBlog}
+            updateLikes={updateBlogLikes}
+            deleteBlog={deleteBlogRecord}
             user={user}
           />
         ))}
