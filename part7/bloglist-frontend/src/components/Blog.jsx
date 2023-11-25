@@ -1,8 +1,8 @@
-import { useState } from "react";
-import PropType from "prop-types";
+import { useState } from "react"
+import PropType from "prop-types"
 
 const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
-  const [view, setView] = useState(false);
+  const [view, setView] = useState(false)
 
   const blogStyle = {
     padding: "10px 0px 10px 5px",
@@ -10,18 +10,18 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
     borderWidth: 1,
     marginBottom: 5,
     borderRadius: 4,
-  };
+  }
 
   const handleView = () => {
-    setView(!view);
-  };
+    setView(!view)
+  }
 
   Blog.proptypes = {
     blog: PropType.object.isRequired,
     updateLikes: PropType.func.isRequired,
     deleteBlog: PropType.func.isRequired,
     user: PropType.object.isRequired,
-  };
+  }
 
   return (
     <div style={blogStyle} className="blogDiv">
@@ -44,7 +44,7 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
         <button onClick={() => deleteBlog(blog.id)}>remove</button>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Blog;
+export default Blog
