@@ -24,25 +24,30 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
   };
 
   return (
-    <div style={blogStyle} className="blogDiv">
-      <div className="titleDiv">
-        {blog.title} | {blog.author}{" "}
-        <button onClick={handleView}>{view ? "hide" : "view"}</button>
-      </div>
-
-      <div style={{ display: view ? " " : "none" }} className="blogDetailsDiv">
-        <div className="urlDiv">{blog.url}</div>
-        <div>
-          {blog.likes}
-          {"   "}
-          <button onClick={() => updateLikes(blog)}>like</button>
+    <div>
+      <div style={blogStyle} className="blogDiv">
+        <div className="titleDiv">
+          {blog.title} | {blog.author}{" "}
+          <button onClick={handleView}>{view ? "hide" : "view"}</button>
         </div>
-        {blog.user.name}
-      </div>
 
-      {user && user.name === blog.user.name && (
-        <button onClick={() => deleteBlog(blog)}>remove</button>
-      )}
+        <div
+          style={{ display: view ? " " : "none" }}
+          className="blogDetailsDiv"
+        >
+          <div className="urlDiv">{blog.url}</div>
+          <div>
+            {blog.likes}
+            {"   "}
+            <button onClick={() => updateLikes(blog)}>like</button>
+          </div>
+          {blog.user.name}
+        </div>
+
+        {user && user.name === blog.user.name && (
+          <button onClick={() => deleteBlog(blog)}>remove</button>
+        )}
+      </div>
     </div>
   );
 };
