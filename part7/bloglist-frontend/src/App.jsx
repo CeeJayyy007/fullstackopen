@@ -54,25 +54,13 @@ const App = () => {
     if (error.includes("token")) {
       dispatch(logoutUser())
     }
-
     dispatch(setNotification(message, true))
-  }
-
-  // login handler
-  const login = async (credentials) => {
-    try {
-      await dispatch(loginUser(credentials))
-    } catch (exception) {
-      const error = exception.response.data.error
-      errorHandler("Wrong username or password", error)
-    }
   }
 
   // create blog handler
   const createNewBlog = async (newBlogObject) => {
     try {
       blogFormRef.current.toggleVisibility()
-
       await dispatch(createBlog(newBlogObject))
       dispatch(
         setNotification(
@@ -110,6 +98,16 @@ const App = () => {
         const error = exception.response.data.error
         errorHandler("error deleting blog", error)
       }
+    }
+  }
+
+  // login handler
+  const login = async (credentials) => {
+    try {
+      await dispatch(loginUser(credentials))
+    } catch (exception) {
+      const error = exception.response.data.error
+      errorHandler("Wrong username or password", error)
     }
   }
 

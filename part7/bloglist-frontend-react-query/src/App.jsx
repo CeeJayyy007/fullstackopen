@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import Title from "./components/Title";
@@ -13,14 +14,17 @@ import {
 import blogService from "./services/blogs.js";
 import loginService from "./services/login.js";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useUserDispatch, useUserValue } from "./context/UserContext.jsx";
 
 const App = () => {
-  const [user, setUser] = useState(null);
-
   const queryClient = useQueryClient();
 
+  // notification context
   const dispatchNotification = useNotificationDispatch();
   const { message, error } = useNotificationValue();
+  // user context
+  const dispatchUser = useUserDispatch();
+  const user = useUserValue();
 
   const result = useQuery({
     queryKey: ["blogs"],
@@ -35,10 +39,8 @@ const App = () => {
     mutationFn: blogService.create,
     onSuccess: (newBlog) => {
       queryClient.invalidateQueries(["blogs"]);
-
       setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`);
     },
-
     onError: (exception) => {
       const error = exception.response.data.error;
       errorHandler(error, "error creating blog");
@@ -47,7 +49,6 @@ const App = () => {
 
   const updateBlogMutation = useMutation({
     mutationFn: blogService.update,
-
     onSuccess: (updatedBlog) => {
       const blogs = queryClient.getQueryData(["blogs"]);
       queryClient.setQueryData(
@@ -55,7 +56,6 @@ const App = () => {
         blogs.map((blog) => (blog.id !== updatedBlog.id ? blog : updatedBlog))
       );
     },
-
     onError: (exception) => {
       const error = exception.response.data.error;
       errorHandler(error, "error updating blog");
@@ -64,11 +64,9 @@ const App = () => {
 
   const deleteBlogMutation = useMutation({
     mutationFn: blogService.remove,
-
     onSuccess: () => {
       queryClient.invalidateQueries(["blogs"]);
     },
-
     onError: (exception) => {
       const error = exception.response.data.error;
       errorHandler(error, "error deleting blog");
@@ -77,11 +75,10 @@ const App = () => {
 
   useEffect(() => {
     const loggedInUserJSON = window.localStorage.getItem("loggedInUser");
-
     if (loggedInUserJSON) {
       const user = JSON.parse(loggedInUserJSON);
-      setUser(user);
       blogService.setToken(user.token);
+      dispatchUser({ type: "SET_USER_FROM_LOCAL_STORAGE", payload: user });
     }
   }, []);
 
@@ -106,9 +103,8 @@ const App = () => {
   const errorHandler = (error, message) => {
     if (error.includes("token")) {
       window.localStorage.removeItem("loggedInUser");
-      setUser(null);
+      dispatchUser({ type: "LOGOUT" });
     }
-
     setNotification(`${message}: ${error}`, true);
   };
 
@@ -145,9 +141,8 @@ const App = () => {
     try {
       const user = await loginService.login(credentials);
       window.localStorage.setItem("loggedInUser", JSON.stringify(user));
-
       blogService.setToken(user.token);
-      setUser(user);
+      dispatchUser({ type: "LOGIN", payload: user });
     } catch (exception) {
       setNotification("Wrong username or password", true);
     }
@@ -156,7 +151,7 @@ const App = () => {
   // logout handler
   const handleLogout = () => {
     window.localStorage.removeItem("loggedInUser");
-    setUser(null);
+    dispatchUser({ type: "LOGOUT" });
   };
 
   if (result.isLoading) {
