@@ -20,6 +20,7 @@ import { useUserDispatch, useUserValue } from "./context/UserContext.jsx";
 import Users from "./components/Users";
 import BlogHeader from "./components/BlogHeader.jsx";
 import "./index.css";
+import User from "./components/User.jsx";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -190,7 +191,14 @@ const App = () => {
           }
         />
 
-        <Route path="/users" element={<Users blogs={blogs} />} />
+        <Route
+          path="/users"
+          element={user ? <Users blogs={blogs} /> : <Navigate replace to="/" />}
+        />
+        <Route
+          path="/users/:id"
+          element={user ? <User blogs={blogs} /> : <Navigate replace to="/" />}
+        />
       </Routes>
     </div>
   );

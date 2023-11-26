@@ -1,10 +1,14 @@
+import { Link } from "react-router-dom";
+
 const Users = ({ blogs }) => {
-  const blogCountsArray = Object.entries(
+  const blogCounts = Object.values(
     blogs.reduce((acc, blog) => {
-      acc[blog.user.name] = (acc[blog.user.name] || 0) + 1;
+      const { name, id } = blog.user;
+      acc[name] = acc[name] || { name, id, count: 0 };
+      acc[name].count++;
       return acc;
     }, {})
-  ).map(([name, count]) => ({ name, count }));
+  );
 
   return (
     <div>
@@ -16,10 +20,12 @@ const Users = ({ blogs }) => {
             <th></th>
             <th>Blogs Created</th>
           </tr>
-          {blogCountsArray.map((count) => {
+          {blogCounts.map((count) => {
             return (
               <tr key={count.name}>
-                <td>{count.name}</td>
+                <td>
+                  <Link to={`/users/${count.id}`}>{count.name}</Link>
+                </td>
                 <td>{count.count}</td>
               </tr>
             );
