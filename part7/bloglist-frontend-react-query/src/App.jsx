@@ -78,7 +78,7 @@ const App = () => {
     if (loggedInUserJSON) {
       const user = JSON.parse(loggedInUserJSON);
       blogService.setToken(user.token);
-      dispatchUser({ type: "SET_USER_FROM_LOCAL_STORAGE", payload: user });
+      dispatchUser({ type: "SET_USER", payload: user });
     }
   }, []);
 
@@ -142,7 +142,7 @@ const App = () => {
       const user = await loginService.login(credentials);
       window.localStorage.setItem("loggedInUser", JSON.stringify(user));
       blogService.setToken(user.token);
-      dispatchUser({ type: "LOGIN", payload: user });
+      dispatchUser({ type: "SET_USER", payload: user });
     } catch (exception) {
       setNotification("Wrong username or password", true);
     }

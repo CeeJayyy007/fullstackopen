@@ -5,12 +5,10 @@ const initialState = null;
 
 const userReducer = (state, action) => {
   switch (action.type) {
-    case "LOGIN":
+    case "SET_USER":
       return action.payload;
     case "LOGOUT":
       return null;
-    case "SET_USER_FROM_LOCAL_STORAGE":
-      return action.payload;
     default:
       return state;
   }
