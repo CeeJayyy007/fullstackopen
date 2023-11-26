@@ -8,14 +8,18 @@ import CreateBlogForm from "./components/CreateBlogForm";
 import Notification from "./components/Notification";
 import "./index.css";
 import Togglable from "./components/Togglable";
+import {
+  useNotificationDispatch,
+  useNotificationValue,
+} from "./context/NotificationContext.jsx";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [blog, setBlog] = useState(null);
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [error, setError] = useState(false);
+
+  const dispatchNotification = useNotificationDispatch();
+  const { message, error } = useNotificationValue();
 
   useEffect(() => {
     blogService
@@ -51,24 +55,27 @@ const App = () => {
       blogService.setToken(user.token);
       setUser(user);
     } catch (exception) {
-      setError(true);
-      setErrorMessage("Wrong username or password");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      setNotification("Wrong username or password", true);
     }
   };
 
+  const setNotification = (message, error) => {
+    dispatchNotification({
+      type: "SHOW",
+      payload: { message, error },
+    });
+    setTimeout(() => {
+      dispatchNotification({ type: "HIDE" });
+    }, 5000);
+  };
+
   const errorHandler = (error, message) => {
-    setError(true);
     if (error.includes("token")) {
       window.localStorage.removeItem("loggedInUser");
       setUser(null);
     }
-    setErrorMessage(`${message}: ${error}`);
-    setTimeout(() => {
-      setErrorMessage(null);
-    }, 5000);
+
+    setNotification(`${message}: ${error}`, true);
   };
 
   // create blog handler
@@ -78,10 +85,8 @@ const App = () => {
       blogFormRef.current.toggleVisibility();
 
       setBlog(blog);
-      setSuccessMessage(`a new blog ${blog.title} by ${blog.author} added`);
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 5000);
+
+      setNotification(`a new blog ${blog.title} by ${blog.author} added`);
     } catch (exception) {
       const error = exception.response.data.error;
       errorHandler(error, "error creating blog");
@@ -148,8 +153,7 @@ const App = () => {
     <div>
       <div>
         <Title title="Blogs" />
-        {successMessage && <Notification message={successMessage} />}
-        {errorMessage && <Notification message={errorMessage} error={error} />}
+        {message && <Notification message={message} error={error} />}
         {!user && loginForm()}
         {user && (
           <>
