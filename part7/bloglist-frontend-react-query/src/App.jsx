@@ -25,17 +25,53 @@ const App = () => {
   const result = useQuery({
     queryKey: ["blogs"],
     queryFn: blogService.getAll,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
   });
 
   // blogs data
-  const blogs = result.data;
+  const blogs = result.data && result.data.sort((a, b) => b.likes - a.likes);
 
   const newBlogMutation = useMutation({
     mutationFn: blogService.create,
     onSuccess: (newBlog) => {
+      queryClient.invalidateQueries(["blogs"]);
+
+      setNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`);
+    },
+
+    onError: (exception) => {
+      const error = exception.response.data.error;
+      errorHandler(error, "error creating blog");
+    },
+  });
+
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.update,
+
+    onSuccess: (updatedBlog) => {
       const blogs = queryClient.getQueryData(["blogs"]);
-      queryClient.setQueryData(["blogs"], blogs.concat(newBlog));
+      queryClient.setQueryData(
+        ["blogs"],
+        blogs.map((blog) => (blog.id !== updatedBlog.id ? blog : updatedBlog))
+      );
+    },
+
+    onError: (exception) => {
+      const error = exception.response.data.error;
+      errorHandler(error, "error updating blog");
+    },
+  });
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.remove,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries(["blogs"]);
+    },
+
+    onError: (exception) => {
+      const error = exception.response.data.error;
+      errorHandler(error, "error deleting blog");
     },
   });
 
@@ -78,56 +114,29 @@ const App = () => {
 
   // create blog handler
   const createBlog = async (newBlogObject) => {
-    try {
-      blogFormRef.current.toggleVisibility();
-      newBlogMutation.mutate(newBlogObject);
-      setNotification(
-        `a new blog ${newBlogObject.title} by ${newBlogObject.author} added`
-      );
-    } catch (exception) {
-      const error = exception.response.data.error;
-      errorHandler(error, "error creating blog");
-    }
+    blogFormRef.current.toggleVisibility();
+    await newBlogMutation.mutate(newBlogObject);
   };
 
   // update blog handler
-  const updateLikes = async (id) => {
-    const blogToUpdate = blogs.find((blog) => blog.id === id);
+  const updateLikes = async (blogToUpdate) => {
+    const updatedBlog = {
+      ...blogToUpdate,
+      likes: blogToUpdate.likes + 1,
+    };
 
-    try {
-      const updatedBlog = await blogService.update(id, {
-        ...blogToUpdate,
-        likes: blogToUpdate.likes + 1,
-      });
-
-      // setBlogs(
-      //   blogs
-      //     .map((blog) => (blog.id === id ? updatedBlog : blog))
-      //     .sort((a, b) => b.likes - a.likes)
-      // );
-    } catch (exception) {
-      const error = exception.response.data.error;
-      errorHandler(error, "error updating blog");
-    }
+    await updateBlogMutation.mutate(updatedBlog);
   };
 
   console.log("blogs", blogs);
 
-  const deleteBlog = async (id) => {
-    const blogToDelete = blogs.find((blog) => blog.id === id);
-
+  const deleteBlog = async (blogToDelete) => {
     if (
       window.confirm(
         `Remove blog ${blogToDelete.title} by ${blogToDelete.author}?`
       )
     ) {
-      try {
-        await blogService.remove(id);
-        // setBlogs(blogs.filter((blog) => blog.id !== id));
-      } catch (exception) {
-        const error = exception.response.data.error;
-        errorHandler(error, "error deleting blog");
-      }
+      await deleteBlogMutation.mutate(blogToDelete.id);
     }
   };
 
@@ -135,7 +144,6 @@ const App = () => {
   const login = async (credentials) => {
     try {
       const user = await loginService.login(credentials);
-
       window.localStorage.setItem("loggedInUser", JSON.stringify(user));
 
       blogService.setToken(user.token);
