@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
-import blogService from "./services/blogs.js";
-import loginService from "./services/login.js";
 import Title from "./components/Title";
 import LoginForm from "./components/LoginForm";
 import CreateBlogForm from "./components/CreateBlogForm";
@@ -12,20 +10,34 @@ import {
   useNotificationDispatch,
   useNotificationValue,
 } from "./context/NotificationContext.jsx";
+import blogService from "./services/blogs.js";
+import loginService from "./services/login.js";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [blog, setBlog] = useState(null);
   const [user, setUser] = useState(null);
+
+  const queryClient = useQueryClient();
 
   const dispatchNotification = useNotificationDispatch();
   const { message, error } = useNotificationValue();
 
-  useEffect(() => {
-    blogService
-      .getAll()
-      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
-  }, [blog]);
+  const result = useQuery({
+    queryKey: ["blogs"],
+    queryFn: blogService.getAll,
+    refetchOnWindowFocus: false,
+  });
+
+  // blogs data
+  const blogs = result.data;
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
+      queryClient.setQueryData(["blogs"], blogs.concat(newBlog));
+    },
+  });
 
   useEffect(() => {
     const loggedInUserJSON = window.localStorage.getItem("loggedInUser");
@@ -44,20 +56,6 @@ const App = () => {
   if (!blogs) {
     return null;
   }
-
-  // login handler
-  const login = async (credentials) => {
-    try {
-      const user = await loginService.login(credentials);
-
-      window.localStorage.setItem("loggedInUser", JSON.stringify(user));
-
-      blogService.setToken(user.token);
-      setUser(user);
-    } catch (exception) {
-      setNotification("Wrong username or password", true);
-    }
-  };
 
   const setNotification = (message, error) => {
     dispatchNotification({
@@ -81,12 +79,11 @@ const App = () => {
   // create blog handler
   const createBlog = async (newBlogObject) => {
     try {
-      const blog = await blogService.create(newBlogObject);
       blogFormRef.current.toggleVisibility();
-
-      setBlog(blog);
-
-      setNotification(`a new blog ${blog.title} by ${blog.author} added`);
+      newBlogMutation.mutate(newBlogObject);
+      setNotification(
+        `a new blog ${newBlogObject.title} by ${newBlogObject.author} added`
+      );
     } catch (exception) {
       const error = exception.response.data.error;
       errorHandler(error, "error creating blog");
@@ -103,11 +100,11 @@ const App = () => {
         likes: blogToUpdate.likes + 1,
       });
 
-      setBlogs(
-        blogs
-          .map((blog) => (blog.id === id ? updatedBlog : blog))
-          .sort((a, b) => b.likes - a.likes)
-      );
+      // setBlogs(
+      //   blogs
+      //     .map((blog) => (blog.id === id ? updatedBlog : blog))
+      //     .sort((a, b) => b.likes - a.likes)
+      // );
     } catch (exception) {
       const error = exception.response.data.error;
       errorHandler(error, "error updating blog");
@@ -126,11 +123,25 @@ const App = () => {
     ) {
       try {
         await blogService.remove(id);
-        setBlogs(blogs.filter((blog) => blog.id !== id));
+        // setBlogs(blogs.filter((blog) => blog.id !== id));
       } catch (exception) {
         const error = exception.response.data.error;
         errorHandler(error, "error deleting blog");
       }
+    }
+  };
+
+  // login handler
+  const login = async (credentials) => {
+    try {
+      const user = await loginService.login(credentials);
+
+      window.localStorage.setItem("loggedInUser", JSON.stringify(user));
+
+      blogService.setToken(user.token);
+      setUser(user);
+    } catch (exception) {
+      setNotification("Wrong username or password", true);
     }
   };
 
@@ -139,6 +150,12 @@ const App = () => {
     window.localStorage.removeItem("loggedInUser");
     setUser(null);
   };
+
+  if (result.isLoading) {
+    return <div>loading data...</div>;
+  } else if (result.isError) {
+    return <div>error loading data</div>;
+  }
 
   const loginForm = () => {
     return (
