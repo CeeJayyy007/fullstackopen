@@ -1,12 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useRef } from "react";
-import Blog from "./components/Blog";
-import Title from "./components/Title";
-import LoginForm from "./components/LoginForm";
-import CreateBlogForm from "./components/CreateBlogForm";
-import Notification from "./components/Notification";
-import "./index.css";
-import Togglable from "./components/Togglable";
+import { useEffect, useRef } from "react";
+import {
+  Routes,
+  Route,
+  Link,
+  Navigate,
+  useNavigate,
+  useMatch,
+} from "react-router-dom";
+import Blogs from "./components/Blogs";
 import {
   useNotificationDispatch,
   useNotificationValue,
@@ -15,6 +17,9 @@ import blogService from "./services/blogs.js";
 import loginService from "./services/login.js";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUserDispatch, useUserValue } from "./context/UserContext.jsx";
+import Users from "./components/Users";
+import BlogHeader from "./components/BlogHeader.jsx";
+import "./index.css";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -160,44 +165,33 @@ const App = () => {
     return <div>error loading data</div>;
   }
 
-  const loginForm = () => {
-    return (
-      <Togglable buttonLabel="Login">
-        <Title title="Log in to application" />
-        <LoginForm login={login} />
-      </Togglable>
-    );
-  };
-
   return (
     <div>
-      <div>
-        <Title title="Blogs" />
-        {message && <Notification message={message} error={error} />}
-        {!user && loginForm()}
-        {user && (
-          <>
-            <p>
-              <strong>{user && user.name}</strong> logged in{" "}
-              <button onClick={handleLogout}>Logout</button>
-            </p>
+      <BlogHeader
+        user={user}
+        message={message}
+        error={error}
+        handleLogout={handleLogout}
+        login={login}
+      />
 
-            <Togglable buttonLabel="Create new list" ref={blogFormRef}>
-              <CreateBlogForm createBlog={createBlog} />
-            </Togglable>
-          </>
-        )}
-        <br />
-        {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateLikes={updateLikes}
-            deleteBlog={deleteBlog}
-            user={user}
-          />
-        ))}
-      </div>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Blogs
+              blogs={blogs}
+              updateLikes={updateLikes}
+              deleteBlog={deleteBlog}
+              user={user}
+              blogFormRef={blogFormRef}
+              createBlog={createBlog}
+            />
+          }
+        />
+
+        <Route path="/users" element={<Users blogs={blogs} />} />
+      </Routes>
     </div>
   );
 };
