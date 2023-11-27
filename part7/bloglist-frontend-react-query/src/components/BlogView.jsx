@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
+import Comments from "./Comments";
 
-const BlogView = ({ blogs, updateLikes, deleteBlog }) => {
+const BlogView = ({ blogs, updateLikes, addComment, deleteBlog, user }) => {
   const { id } = useParams();
   const blog = blogs.find((blog) => blog.id === id);
 
@@ -22,15 +23,10 @@ const BlogView = ({ blogs, updateLikes, deleteBlog }) => {
         <button onClick={() => updateLikes(blog)}>like</button>
       </div>
       added by {blog.user.name}
-      <button onClick={() => deleteBlog(blog)}>remove</button>
-      <div>
-        <h2>comments</h2>
-        <ul>
-          {blog.comments.map((comment) => (
-            <li key={comment}>{comment}</li>
-          ))}
-        </ul>
-      </div>
+      {user && user.name === blog.user.name && (
+        <button onClick={() => deleteBlog(blog)}>remove</button>
+      )}
+      <Comments blog={blog} addComment={addComment} />
     </div>
   );
 };
