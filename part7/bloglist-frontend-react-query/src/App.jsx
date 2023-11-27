@@ -3,8 +3,8 @@ import { useEffect, useRef } from "react";
 import {
   Routes,
   Route,
-  Link,
   Navigate,
+  Link,
   useNavigate,
   useMatch,
 } from "react-router-dom";
@@ -21,9 +21,11 @@ import Users from "./components/Users";
 import BlogHeader from "./components/BlogHeader.jsx";
 import "./index.css";
 import User from "./components/User.jsx";
+import BlogView from "./components/BlogView.jsx";
 
 const App = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // notification context
   const dispatchNotification = useNotificationDispatch();
@@ -72,6 +74,7 @@ const App = () => {
     mutationFn: blogService.remove,
     onSuccess: () => {
       queryClient.invalidateQueries(["blogs"]);
+      navigate("/");
     },
     onError: (exception) => {
       const error = exception.response.data.error;
@@ -198,6 +201,20 @@ const App = () => {
         <Route
           path="/users/:id"
           element={user ? <User blogs={blogs} /> : <Navigate replace to="/" />}
+        />
+        <Route
+          path="/blogs/:id"
+          element={
+            user ? (
+              <BlogView
+                blogs={blogs}
+                updateLikes={updateLikes}
+                deleteBlog={deleteBlog}
+              />
+            ) : (
+              <Navigate replace to="/" />
+            )
+          }
         />
       </Routes>
     </div>
