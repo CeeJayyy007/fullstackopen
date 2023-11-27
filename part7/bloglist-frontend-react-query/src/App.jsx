@@ -22,6 +22,7 @@ import BlogHeader from "./components/BlogHeader.jsx";
 import "./index.css";
 import User from "./components/User.jsx";
 import BlogView from "./components/BlogView.jsx";
+import NavBar from "./components/NavBar.jsx";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -151,7 +152,8 @@ const App = () => {
       const user = await loginService.login(credentials);
       window.localStorage.setItem("loggedInUser", JSON.stringify(user));
       blogService.setToken(user.token);
-      dispatchUser({ type: "SET_USER", payload: user });
+      await dispatchUser({ type: "SET_USER", payload: user });
+      navigate("/");
     } catch (exception) {
       setNotification("Wrong username or password", true);
     }
@@ -171,6 +173,7 @@ const App = () => {
 
   return (
     <div>
+      <NavBar user={user} handleLogout={handleLogout} />
       <BlogHeader
         user={user}
         message={message}
