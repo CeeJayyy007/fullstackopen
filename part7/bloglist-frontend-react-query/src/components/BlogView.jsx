@@ -23,6 +23,14 @@ const BlogView = ({ blogs, updateLikes, deleteBlog }) => {
       </div>
       added by {blog.user.name}
       <button onClick={() => deleteBlog(blog)}>remove</button>
+      <div>
+        <h2>comments</h2>
+        <ul>
+          {blog.comments.map((comment) => (
+            <li key={comment}>{comment}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
