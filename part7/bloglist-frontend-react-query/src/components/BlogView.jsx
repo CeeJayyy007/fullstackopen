@@ -5,7 +5,7 @@ const BlogView = ({ blogs, updateLikes, addComment, deleteBlog, user }) => {
   const { id } = useParams();
   const blog = blogs.find((blog) => blog.id === id);
 
-  if (!blogs) {
+  if (!blogs || !blog) {
     return null;
   }
 

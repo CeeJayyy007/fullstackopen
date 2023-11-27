@@ -1,9 +1,9 @@
 import Title from "./Title";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import PropType from "prop-types";
 
 // add new blog
-const CreateBlogForm = ({ createBlog }) => {
+const CreateBlogForm = ({ createBlog, blogFormRef }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -15,6 +15,7 @@ const CreateBlogForm = ({ createBlog }) => {
       title: title,
       author: author,
       url: url,
+      blogFormRef,
     });
 
     setTitle("");

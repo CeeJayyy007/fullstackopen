@@ -1,19 +1,23 @@
 import Blog from "./Blog";
 import Togglable from "./Togglable";
 import CreateBlogForm from "./CreateBlogForm";
+import { useRef } from "react";
 
 const Blogs = ({
   blogs,
   updateLikes,
   deleteBlog,
   user,
-  blogFormRef,
+
   createBlog,
 }) => {
+  // create blog ref for togglable
+  const blogFormRef = useRef();
+
   return (
     <div>
       <Togglable buttonLabel="Create new list" ref={blogFormRef}>
-        <CreateBlogForm createBlog={createBlog} />
+        <CreateBlogForm createBlog={createBlog} blogFormRef={blogFormRef} />
       </Togglable>
 
       {blogs.map((blog) => (
