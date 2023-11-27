@@ -23,6 +23,7 @@ import "./index.css";
 import User from "./components/User.jsx";
 import BlogView from "./components/BlogView.jsx";
 import NavBar from "./components/NavBar.jsx";
+import ToggleableLoginForm from "./components/TogglableLoginForm.jsx";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -219,6 +220,7 @@ const App = () => {
             )
           }
         />
+        <Route path="/login" element={<ToggleableLoginForm login={login} />} />
       </Routes>
     </div>
   );

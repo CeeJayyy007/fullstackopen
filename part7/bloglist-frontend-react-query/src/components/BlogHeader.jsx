@@ -8,8 +8,6 @@ const BlogHeader = ({ user, message, error, handleLogout, login }) => {
     <div>
       <Title title="Blogs" />
       {message && <Notification message={message} error={error} />}
-      {!user && <ToggleableLoginForm login={login} />}
-
       <Outlet />
     </div>
   );
