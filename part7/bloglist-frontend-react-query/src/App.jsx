@@ -72,6 +72,19 @@ const App = () => {
     },
   });
 
+  const commentMutation = useMutation({
+    mutationFn: (params) => blogService.comment(...params),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["blogs"]);
+      setNotification("comment added successfully!");
+    },
+
+    onError: (exception) => {
+      const error = exception.response.data.error;
+      errorHandler(error, "error updating blog");
+    },
+  });
+
   const deleteBlogMutation = useMutation({
     mutationFn: blogService.remove,
     onSuccess: () => {
@@ -133,6 +146,11 @@ const App = () => {
     };
 
     await updateBlogMutation.mutate(updatedBlog);
+  };
+
+  // add comment handler
+  const addComment = async (comment, id) => {
+    await commentMutation.mutate([comment, id]);
   };
 
   console.log("blogs", blogs);
@@ -200,11 +218,15 @@ const App = () => {
 
         <Route
           path="/users"
-          element={user ? <Users blogs={blogs} /> : <Navigate replace to="/" />}
+          element={
+            user ? <Users blogs={blogs} /> : <Navigate replace to="/login" />
+          }
         />
         <Route
           path="/users/:id"
-          element={user ? <User blogs={blogs} /> : <Navigate replace to="/" />}
+          element={
+            user ? <User blogs={blogs} /> : <Navigate replace to="/login" />
+          }
         />
         <Route
           path="/blogs/:id"
@@ -214,9 +236,11 @@ const App = () => {
                 blogs={blogs}
                 updateLikes={updateLikes}
                 deleteBlog={deleteBlog}
+                addComment={addComment}
+                user={user}
               />
             ) : (
-              <Navigate replace to="/" />
+              <Navigate replace to="/login" />
             )
           }
         />

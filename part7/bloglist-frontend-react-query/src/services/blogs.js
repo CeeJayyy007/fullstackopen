@@ -36,6 +36,22 @@ const update = async (newObject) => {
   return response.data;
 };
 
+const comment = async (commentToAdd, id) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+
+  const comment = { comment: commentToAdd };
+
+  const response = await axios.put(
+    `${baseUrl}/${id}/comments`,
+    comment,
+    config
+  );
+
+  return response.data;
+};
+
 const remove = async (id) => {
   const config = {
     headers: { Authorization: token },
@@ -43,9 +59,7 @@ const remove = async (id) => {
 
   const response = await axios.delete(`${baseUrl}/${id}`, config);
 
-  console.log("response.data", response);
-
   return response.data;
 };
 
-export default { getAll, create, setToken, update, remove };
+export default { getAll, create, setToken, update, comment, remove };
