@@ -1,5 +1,6 @@
 import { useState } from "react";
 import PropType from "prop-types";
+import { Link } from "react-router-dom";
 
 const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
   const [view, setView] = useState(false);
@@ -24,30 +25,10 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
   };
 
   return (
-    <div>
-      <div style={blogStyle} className="blogDiv">
-        <div className="titleDiv">
-          {blog.title} | {blog.author}{" "}
-          <button onClick={handleView}>{view ? "hide" : "view"}</button>
-        </div>
-
-        <div
-          style={{ display: view ? " " : "none" }}
-          className="blogDetailsDiv"
-        >
-          <div className="urlDiv">{blog.url}</div>
-          <div>
-            {blog.likes}
-            {"   "}
-            <button onClick={() => updateLikes(blog)}>like</button>
-          </div>
-          {blog.user.name}
-        </div>
-
-        {user && user.name === blog.user.name && (
-          <button onClick={() => deleteBlog(blog)}>remove</button>
-        )}
-      </div>
+    <div style={blogStyle} className="blogDiv">
+      <Link to={`/blogs/${blog.id}`}>
+        {blog.title} | {blog.author}
+      </Link>
     </div>
   );
 };
