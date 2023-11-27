@@ -17,7 +17,6 @@ import useBlogFunctions from "./hook/useBlogFunctions.js";
 import useNotification from "./hook/useNotification.js";
 
 const App = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   // user context
